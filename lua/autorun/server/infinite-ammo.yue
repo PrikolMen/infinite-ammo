@@ -1,0 +1,33 @@
+AddonName = "Infinite Ammo"
+:GetAmmoMax = game
+:Add = hook
+
+ConVar = CreateConVar( "sbox_infinite_ammo", "1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "If you actively dynamically give ammo to players who need it.", 0, 1 )
+
+Add "PlayerAmmoChanged", AddonName, ( ammoType, oldCount, newCount ) =>
+    unless ConVar\GetBool! and oldCount > newCount
+        return
+
+    ammoLimit = GetAmmoMax( ammoType )
+    unless newCount < ammoLimit
+        return
+
+    amount = ammoLimit - newCount
+    if amount > 0
+        @GiveAmmo( amount, ammoType, true )
+
+Add "WeaponEquip", AddonName, ( owner ) =>
+    unless ConVar\GetBool!
+        return
+
+    clip1Type = @GetPrimaryAmmoType!
+    if clip1Type >= 0
+        amount = GetAmmoMax( clip1Type ) - owner\GetAmmoCount( clip1Type )
+        if amount > 0
+            owner\GiveAmmo( amount, clip1Type, true )
+
+    clip2Type = @GetSecondaryAmmoType!
+    if clip2Type >= 0
+        amount = GetAmmoMax( clip2Type ) - owner\GetAmmoCount( clip2Type )
+        if amount > 0
+            owner\GiveAmmo( amount, clip2Type, true )
