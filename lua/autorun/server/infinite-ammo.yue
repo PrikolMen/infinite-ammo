@@ -9,7 +9,7 @@ Add "PlayerAmmoChanged", AddonName, ( ammoType, oldCount, newCount ) =>
         return
 
     ammoLimit = GetAmmoMax( ammoType )
-    unless newCount < ammoLimit
+    if newCount >= ammoLimit
         return
 
     amount = ammoLimit - newCount
