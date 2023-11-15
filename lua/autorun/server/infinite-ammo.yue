@@ -1,10 +1,8 @@
+ConVar = CreateConVar( "sbox_infinite_ammo", "1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "If you actively dynamically give ammo to players who need it.", 0, 1 )
 AddonName = "Infinite Ammo"
 :GetAmmoMax = game
-:Add = hook
 
-ConVar = CreateConVar( "sbox_infinite_ammo", "1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "If you actively dynamically give ammo to players who need it.", 0, 1 )
-
-Add "PlayerAmmoChanged", AddonName, ( ammoType, oldCount, newCount ) =>
+hook.Add "PlayerAmmoChanged", AddonName, ( ammoType, oldCount, newCount ) =>
     unless ConVar\GetBool! and oldCount > newCount
         return
 
@@ -16,7 +14,7 @@ Add "PlayerAmmoChanged", AddonName, ( ammoType, oldCount, newCount ) =>
     if amount > 0
         @GiveAmmo( amount, ammoType, true )
 
-Add "WeaponEquip", AddonName, ( owner ) =>
+hook.Add "WeaponEquip", AddonName, ( owner ) =>
     unless ConVar\GetBool!
         return
 
